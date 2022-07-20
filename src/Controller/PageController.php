@@ -62,6 +62,10 @@ class PageController extends AbstractController
             $crawler = new Crawler($content);
 
             $article['header'] = $crawler->filter('.article__header__title-in')->text();
+            $article['image'] = $crawler->filter('.article__main-image .article__main-image__wrap img')
+                ->each(function ($node) {
+                    return $node->attr('src');
+                });
             $article['overview'] = $crawler->filter('.article__text__overview')->each(function ($node) {
                 return $node->text();
             });

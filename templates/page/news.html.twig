@@ -17,6 +17,9 @@
             <h4>
                 {{ link.article['header'] }}
             </h4>
+            {% if link.article['image'] %}
+                <img src="{{ link.article['image'][0] }}">
+            {% endif %}
             <span>
                 {{ link.article['text'] }}
             </span>
