@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
@@ -68,8 +69,36 @@ class PageController extends AbstractController
             });
 
             $article['text'] = implode(" ", $article['text']);
+
+            $this->saveArticle($article);
         }
 
         return $article;
+    }
+
+    private function saveArticle($info){
+        $doctrine = $this->getDoctrine();
+        $entityManager = $doctrine->getManager();
+
+        $article = new Article();
+        $article->setHeader($info['header']);
+        if($info['image']){
+            $article->setImage($info['image'][0]);
+        }
+        if($info['overview']){
+            $article->setOverview($info['overview'][0]);
+        }
+        $article->setText($info['text']);
+
+        $article->setRating(rand(1, 11));
+
+
+        // сообщите Doctrine, что вы хотите (в итоге) сохранить Продукт (пока без запросов)
+        $entityManager->persist($article);
+
+        // действительно выполните запросы (например, запрос INSERT)
+        $entityManager->flush();
+
+        return new Response('Saved new product with id '.$article->getId());
     }
 }

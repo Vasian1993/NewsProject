@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
@@ -36,6 +37,11 @@ class Article
      * @ORM\Column(type="text")
      */
     private $text;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $rating;
 
     public function getId(): ?int
     {
@@ -86,6 +92,18 @@ class Article
     public function setText(string $text): self
     {
         $this->text = $text;
+
+        return $this;
+    }
+
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(string $rating): self
+    {
+        $this->rating = $rating;
 
         return $this;
     }
