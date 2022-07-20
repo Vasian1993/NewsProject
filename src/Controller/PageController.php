@@ -19,17 +19,12 @@ class PageController extends AbstractController
     public function parseMainPage(): Response
     {
         $url = "https://nsk.rbc.ru/";
-
         $client = HttpClient::create();
-
         $response = $client->request('GET', $url);
-
         $statusCode = $response->getStatusCode();
-
 
         if ($statusCode == '200') {
             $content = $response->getContent();
-
             $crawler = new Crawler($content);
 
             $links = $crawler->filter('a.main__feed__link')
@@ -49,7 +44,7 @@ class PageController extends AbstractController
         ]);
     }
 
-    public function parseArticle($url): array
+    private function parseArticle($url): array
     {
         $client = HttpClient::create();
         $response = $client->request('GET', $url);
@@ -58,7 +53,6 @@ class PageController extends AbstractController
 
         if ($statusCode == '200') {
             $content = $response->getContent();
-
             $crawler = new Crawler($content);
 
             $article['header'] = $crawler->filter('.article__header__title-in')->text();
