@@ -7,7 +7,20 @@
 <body>
 <ul>
     {% for link in links %}
-        <li>{{ link.title|e }}</li>
+        <li>
+            <a href="{{ link.href|e }}">
+                {{ link.title|e }}
+            </a>
+
+            <br>
+
+            <h4>
+                {{ link.article['header'] }}
+            </h4>
+            <span>
+                {{ link.article['text'] }}
+            </span>
+        </li>
     {% endfor %}
 </ul>
 </body>

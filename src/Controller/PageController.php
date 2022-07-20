@@ -16,7 +16,7 @@ class PageController extends AbstractController
     /**
      * @Route("/parse/news")
      */
-    public function parse(): Response
+    public function parseMainPage(): Response
     {
         $url = "https://nsk.rbc.ru/";
 
@@ -26,21 +26,52 @@ class PageController extends AbstractController
 
         $statusCode = $response->getStatusCode();
 
-        if($statusCode == '200'){
+
+        if ($statusCode == '200') {
             $content = $response->getContent();
 
             $crawler = new Crawler($content);
 
-            $links = $crawler->filter('a.main__feed__link')->each(function ($node){
-                $href = $node->attr('href');
-                $title = $node->filter('span.main__feed__title')->text();
-
-                return compact('href', 'title');
-            });
+            $links = $crawler->filter('a.main__feed__link')
+                ->reduce(function (Crawler $node, $i) {
+                    return ($i < 15);
+                })
+                ->each(function ($node) {
+                    $href = $node->attr('href');
+                    $title = $node->filter('span.main__feed__title')->text();
+                    $article = $this->parseArticle($href);
+                    return compact('href', 'title', 'article');
+                });
         }
 
         return $this->render('page/news.html.twig', [
-            'links' => $links,
+            'links' => $links
         ]);
+    }
+
+    public function parseArticle($url): array
+    {
+        $client = HttpClient::create();
+        $response = $client->request('GET', $url);
+        $statusCode = $response->getStatusCode();
+        $article = [];
+
+        if ($statusCode == '200') {
+            $content = $response->getContent();
+
+            $crawler = new Crawler($content);
+
+            $article['header'] = $crawler->filter('.article__header__title-in')->text();
+            $article['overview'] = $crawler->filter('.article__text__overview')->each(function ($node) {
+                return $node->text();
+            });
+            $article['text'] = $crawler->filter('.article__text p')->each(function ($node) {
+                return $node->text();
+            });
+
+            $article['text'] = implode(" ", $article['text']);
+        }
+
+        return $article;
     }
 }
