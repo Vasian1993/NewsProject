@@ -43,6 +43,11 @@ class Article
      */
     private $rating;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $href;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +94,11 @@ class Article
         return $this->text;
     }
 
+    public function getPreviewText(): ?string
+    {
+        return mb_substr($this->text,0,200,'UTF-8');
+    }
+
     public function setText(string $text): self
     {
         $this->text = $text;
@@ -104,6 +114,18 @@ class Article
     public function setRating(string $rating): self
     {
         $this->rating = $rating;
+
+        return $this;
+    }
+
+    public function getHref(): ?string
+    {
+        return $this->href;
+    }
+
+    public function setHref(string $href): self
+    {
+        $this->href = $href;
 
         return $this;
     }

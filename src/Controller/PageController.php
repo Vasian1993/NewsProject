@@ -70,6 +70,8 @@ class PageController extends AbstractController
 
             $article['text'] = implode(" ", $article['text']);
 
+            $article['href'] = $url;
+
             $this->saveArticle($article);
         }
 
@@ -90,15 +92,52 @@ class PageController extends AbstractController
         }
         $article->setText($info['text']);
 
+        if($info['href']){
+            $article->setHref($info['href']);
+        }
+
         $article->setRating(rand(1, 11));
 
-
-        // сообщите Doctrine, что вы хотите (в итоге) сохранить Продукт (пока без запросов)
         $entityManager->persist($article);
 
-        // действительно выполните запросы (например, запрос INSERT)
         $entityManager->flush();
 
         return new Response('Saved new product with id '.$article->getId());
+    }
+
+    /**
+     * @Route("/show/news")
+     */
+    public function showMainPage(): Response
+    {
+        $doctrine = $this->getDoctrine();
+        $repository = $doctrine->getRepository(Article::class);
+        $links = $repository->findAll();
+//dd($links);
+        return $this->render('page/show.news.html.twig', [
+            'links' => $links
+        ]);
+    }
+
+    /**
+     * @Route("/news/edit/{id}/{rating}", methods={"GET","HEAD"})
+     */
+    public function updateRating($id, $rating): Response
+    {
+        $doctrine = $this->getDoctrine();
+        $entityManager = $doctrine->getManager();
+        $repository = $doctrine->getRepository(Article::class);
+        $article = $repository->find($id);
+
+        if (!$article) {
+            throw $this->createNotFoundException(
+                'No article found for id '.$id
+            );
+        }
+
+        $article->setRating($rating);
+        $entityManager->flush();
+
+        return new Response('Saved new product with id '.$article->getId().' and rating '.$article->getRating());
     }
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Новости</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+
+<ul>
+    {% for link in links %}
+        <li>
+            <a href="{{ link.getHref() }}">
+                {{ link.getHeader() }}
+            </a>
+            <br>
+
+            <span>
+                {{ link.getPreviewText() }}
+            </span>
+
+            <br>
+            Рейтинг: <input type="number" value="{{ link.getRating() }}" name="news[{{ link.getId() }}]">
+            <button class="js-update-rating" data-href="/news/edit/{{ link.getId() }}/">Изменить рейтинг</button>
+        </li>
+        <hr>
+    {% endfor %}
+</ul>
+<script>
+    $('.js-update-rating').on('click', function (){
+        let url = $(this).data('href');
+        let urlWithRating = url + $(this).prev().val();
+
+        location.href=urlWithRating;
+    });
+</script>
+</body>
+</html>
