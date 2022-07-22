@@ -138,6 +138,6 @@ class PageController extends AbstractController
         $article->setRating($rating);
         $entityManager->flush();
 
-        return new Response('Saved new product with id '.$article->getId().' and rating '.$article->getRating());
+        return new Response('Saved product with id '.$article->getId().' and rating '.$article->getRating());
     }
 }
